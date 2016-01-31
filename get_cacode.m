@@ -1,6 +1,6 @@
 function ca_code = get_cacode( sv, fs )
 % sv:satellite number
-% fs: 
+% fs: fd/1023000
 % table of C/A Code Tap Selection
 tap=[2 6;
     3 7;
