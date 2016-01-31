@@ -6,16 +6,16 @@ td=1/fd;%Шаг
 lenght=3e8/f; % длинна волны
 t=td:td:0.01;%Время
 N=1:length(t);%длинна
-PRN=1;%номер спутника
-len=1023;%длинна кода
-omeg=0;%частота модуляции
-cacode = get_ca_bits(len,PRN);
+sv=1;
+fs=100e6/1023000;
+omeg=0;%частота несущей
+ca_code = get_cacode(sv,fs);
 n=1;
 %циклически модулированный сигнал
 for k=1:length(t)
-x(k) = cacode(n)*exp(j*omeg*n);
+x(k) = ca_code(n)*exp(j*omeg*k);
 n=n+1;
-    if(n>len)
+    if(n>length(ca_code))
      n=1;
     end
 end
@@ -45,7 +45,8 @@ s4_3 = circshift(s4,2); % итоговый сигнал с задержкой на выходе 4й антенны
 
 q=correlator(x,s1);%поиск полезного сигнала до фильтрации
 figure(6);
-plot(real(q));
+plot(abs(q));
+title('Корреляция до фильтрации');
 
 % Отображение сигнала с 4х антенн под шумом
 figure(1)
@@ -70,7 +71,7 @@ Inter4_3=s4_3(1:1000); % интервал выборки x4_3
 d=Inter1;  % Эталонный сигнал выборки
 d2=s1; % Эталонный сигнал
 Uinter = [Inter2;Inter2_2;Inter2_3;Inter3;Inter3_2;Inter3_3;Inter4;Inter4_2;Inter4_3]; % Периферийные антенны выборки
-U = [Inter2;Inter2_2;Inter2_3;Inter3;Inter3_2;Inter3_3;Inter4;Inter4_2;Inter4_3];  %Периферийные антенны полноценного сигнала
+U = [s2;s2_2;s2_3;s3;s3_2;s3_3;s4;s4_2;s4_3];  %Периферийные антенны полноценного сигнала
 
 W=[0;0;0;0;0;0;0;0;0];%коэффицент
 step = 1000; %Количество итераций фильтра
@@ -90,10 +91,12 @@ end;
  for k=1:3
  w(k,1)=W(k*3,1);
  end 
- 
-q2=correlator(x(1:1000),e);%поиск полезного сигнала после фильтрации
+ Y2=W'*U;
+ e2=d2-Y2;
+q2=correlator(x,e2);%корреляция после фильтрации
 figure(7);
-plot(real(q2));
+plot(abs(q2));
+title('Корреляция после фильтрации');
  
 noise(1,:)=noise2(1:1000);
 noise(2,:)=noise3(1:1000);

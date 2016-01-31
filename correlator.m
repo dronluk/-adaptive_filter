@@ -1,9 +1,9 @@
-function  q  = correlator(x, s)
-X=x;
-S=s;
-S=fft(S);
-X=conj(fft(conj(X)));
-q=S.*X;
+function  q  = correlator(usefulsignal, signal)
+x=usefulsignal;
+s=signal;
+s=fft(s);
+x=conj(fft(conj(x)));
+q=s.*x;
 q=ifft(q);
 end
 
