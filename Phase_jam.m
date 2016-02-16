@@ -1,5 +1,12 @@
-function PH = Phase_jam(az,zen,lambda)
-angles=[az zen]';
+function [jam] = Phase_jam(F,TD,Time,a,az,zen,lambda)
+angles=[zen az]';
+A=a;
+f=F;
+td=TD;%период дискретизации 
+T=Time;%время моделирования в секундах
+Nms=T*1000; %количество миллисекунд моделирования ( Nms = T*1000 ),
+t=td:td:T; % интервал мод
+N=1:length(t);
 %angles=[40 160]';              % задание углов прихода помехи
 %lambda = 0.187;                % длинна волны (в метрах) = скорость света / частота помехи (1 600 МГц)
 L = lambda/2;                  % расстояние между антенными элементами
@@ -19,6 +26,8 @@ PaR=Pa*R';
 PaR=(pi*PaR)/lambda;
 % переход к эксоненциальному представлению
 PH = exp(1i*PaR);
- 
+
+jam1=A*exp(1i*2*pi*f*td*N);  % сигнал коррелированной помехи
+jam=PH*jam1;
 end
 
